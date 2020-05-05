@@ -4,6 +4,8 @@ import numpy as np
 from numpy.random import default_rng
 import math
 
+from .HyperopinionInterface import HyperopinionInterface
+
 
 def comb(n, m):
     if n < m:
@@ -12,7 +14,7 @@ def comb(n, m):
         return math.factorial(n) / (math.factorial(m) * math.factorial(n - m))
 
 
-class Hyperopinion:
+class Hyperopinion(HyperopinionInterface):
     W = 2
 
     def set_to_index(self, composite: set) -> int:
@@ -103,17 +105,3 @@ class Hyperopinion:
         self.__calculate_a(a)
 
         self.__calculate_P()
-
-
-def main():
-    #hyp = Hyperopinion.generate_random_belief(3)
-    hyp = Hyperopinion(3, [4/9, 3/9, 2/9, 0, 0, 0])
-    print(hyp.b)
-    print(hyp.u)
-    print(hyp.a)
-    print(sum(hyp.b) + hyp.u)
-    print(hyp.P)
-
-
-if __name__ == "__main__":
-    main()

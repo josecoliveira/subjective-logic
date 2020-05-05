@@ -1,0 +1,2 @@
+class HyperopinionInterface:
+    pass
