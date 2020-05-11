@@ -80,8 +80,8 @@ class Hyperopinion(HyperopinionInterface):
         return self.a[self.set_to_index(x.intersection(xi))] / self.a[self.set_to_index(xi)]
 
     def __calculate_P(self):
-        self.P = np.zeros(self.k)
-        for x in range(self.k):
+        self.P = np.zeros(self.kappa)
+        for x in range(self.kappa):
             for xi in range(self.kappa):
                 self.P[x] += self.relative_a(x, xi) * self.b[xi]
             self.P[x] += self.a[x] * self.u
