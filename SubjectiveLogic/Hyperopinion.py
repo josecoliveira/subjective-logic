@@ -105,3 +105,34 @@ class Hyperopinion(HyperopinionInterface):
         self.__calculate_a(a)
 
         self.__calculate_P()
+
+    def __repr__(self):
+        return f'Hyperopinion({self.k}, {self.b}, {self.a[0:self.k]})'
+
+    def __str__(self):
+        b = ''
+        for i in range(len(self.b)):
+            b += f'b({self.index_to_set(i)}) = {self.b[i]}'
+            if i != len(self.b) - 1:
+                b += '\n'
+
+        a = ''
+        for i in range(len(self.a[0:self.k])):
+            a += f'a({self.index_to_set(i)}) = {self.a[i]}'
+            if i != len(self.a) - 1:
+                a += '\n'
+
+        P = ''
+        for i in range(len(self.P)):
+            P += f'P({self.index_to_set(i)}) = {self.P[i]}'
+            if i != len(self.b) - 1:
+                P += '\n'
+
+        return f'''k = {self.k}
+            
+{b}
+u = {self.u}
+
+{a}
+
+{P}'''
