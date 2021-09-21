@@ -99,6 +99,34 @@ def weighted_fusion(CC):
     k = CC[0].k
     kappa = CC[0].kappa
 
-    if all(C.u != 0 for C in CC):
+    if all(C.u != 0 for C in CC) and any(C.u != 1 for C in CC):
         b = np.array([])
-        dem = np.sum([np.prod([fora Ci in CC if ]) for C in CC])
+        dem = np.sum([np.prod([Ci.u for Ci in CC if Ci != C]) for C in CC]) - N * np.prod([C.u for C in CC])
+        for x in range(kappa):
+           num = np.sum([C.b[x] * (1 - C.u) * np.prod([Ci.u for Ci in CC if Ci != C]) for C in CC])
+           b = np.append(b, num / dem)
+
+        a = np.array([])
+        for x in range(k):
+            a = np.append(a, np.sum([C.a[x] * (1 - C.u) for C in CC]) / (N - np.sum([C.u for C in CC])))
+    elif any(C.u == 0 for C in CC):
+        CCdog = [C for C in CC if C.u == 0]
+        gamma = len(CCdog)
+
+        b = np.array([])
+        for x in range(kappa):
+            b = np.append(b, np.sum([C.b[x] for C in CCdog]) / gamma)
+
+        a = np.array([])
+        for x in range(k):
+            a = np.append(a, np.sum([C.a[x] for C in CCdog]) / gamma)
+    else:
+        b = np.array([])
+        for x in range(kappa):
+            b = np.append(b, 0)
+
+        a = np.array([])
+        for x in range(k):
+            a = np.append(a, np.sum([C.a[x] for C in CC]) / N)
+
+    return Hyperopinion(k, b, a)
