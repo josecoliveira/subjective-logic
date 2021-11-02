@@ -137,3 +137,17 @@ u = {self.u}
 
 {P}'''
 
+    @property
+    def is_hyperopinion(self):
+        return sum(self.b[i] for i in range(self.k)) != 1
+
+    def maximize_uncertainty(self):
+        if self.is_hyperopinion:
+            raise Exception('You can only maximize uncertainty of multinomial opinions')
+
+        u = min(self.P[i]/self.a[i] for i in range(self.k))
+        a = self.a.copy()
+        b = self.P - self.a * u
+
+        return Hyperopinion(self.k, b, a)
+
