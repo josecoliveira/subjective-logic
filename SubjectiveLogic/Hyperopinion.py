@@ -151,7 +151,11 @@ u = {self.u}
             raise Exception('You can only maximize uncertainty of multinomial opinions')
 
         u = min(self.P[i] / self.a[i] for i in range(self.k))
-        a = self.a.copy()
-        b = self.P - self.a * u
+        a = self.a.copy()[0:self.k]
+        b = self.P[0:self.k] - self.a[0:self.k] * u
+
+        print(u)
+        print(a)
+        print(b)
 
         return Hyperopinion(self.k, b, a[0:self.k])
