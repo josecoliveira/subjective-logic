@@ -89,9 +89,14 @@ class Hyperopinion(HyperopinionInterface):
     def __init__(self, k, b, a=None):
         self.k = k
         self.kappa = 2 ** self.k - 2
-        self.b = np.array(b)
-        if self.kappa != len(self.b):
+
+        if len(b) == self.kappa:
+            self.b = np.array(b)
+        elif len(b) == self.k:
+            self.b = np.append(np.array(b), np.zeros(self.kappa - self.k))
+        else:
             raise Exception('Size of belief mass distribution and size of domain (k) are not compatible.')
+
         if sum(self.b) > 1:
             raise Exception('Sum of belief mass distribution is greater than 1. It should be equal or less than 1.')
         self.u = 1 - np.sum(self.b)
@@ -139,15 +144,14 @@ u = {self.u}
 
     @property
     def is_hyperopinion(self):
-        return sum(self.b[i] for i in range(self.k)) != 1
+        return sum(self.b[i] for i in range(self.k)) + self.u != 1
 
     def maximize_uncertainty(self):
         if self.is_hyperopinion:
             raise Exception('You can only maximize uncertainty of multinomial opinions')
 
-        u = min(self.P[i]/self.a[i] for i in range(self.k))
+        u = min(self.P[i] / self.a[i] for i in range(self.k))
         a = self.a.copy()
         b = self.P - self.a * u
 
-        return Hyperopinion(self.k, b, a)
-
+        return Hyperopinion(self.k, b, a[0:self.k])
