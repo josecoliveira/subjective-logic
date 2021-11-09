@@ -154,8 +154,4 @@ u = {self.u}
         a = self.a.copy()[0:self.k]
         b = self.P[0:self.k] - self.a[0:self.k] * u
 
-        print(u)
-        print(a)
-        print(b)
-
         return Hyperopinion(self.k, b, a[0:self.k])
