@@ -4,8 +4,9 @@ from .HyperopinionDecorator import HyperopinionDecorator
 from .HyperopinionInterface import HyperopinionInterface
 from .Hyperopinion import Hyperopinion
 
+epsilon = 0.000001
 
-def cumulative_fusion(CC):
+def cumulative_fusion(CC, epistemic=True):
     if any(C.k != CC[0].k for C in CC[1:]):
         raise Exception("The hyperopinions have different cardinalities.")
     if len(CC) == 0:
@@ -46,11 +47,17 @@ def cumulative_fusion(CC):
         a = np.array([])
         for x in range(k):
             a = np.append(a, np.sum([C.a[x] for C in CCdog]) / gamma)
+    
+    b = np.round(b, decimals=6)
+    a = np.round(a, decimals=6)
 
-    return Hyperopinion(k, b, a)
+    if epistemic:
+        return Hyperopinion(k, b, a).maximize_uncertainty()
+    else:
+        return Hyperopinion(k, b, a)
 
 
-def averaging_fusion(CC):
+def averaging_fusion(CC, epistemic=True):
     if any(C.k != CC[0].k for C in CC[1:]):
         raise Exception("The hyperopinions have different cardinalities.")
     if len(CC) == 0:
@@ -84,10 +91,16 @@ def averaging_fusion(CC):
         for x in range(k):
             a = np.append(a, np.sum([C.a[x] for C in CCdog]) / gamma)
 
-    return Hyperopinion(k, b, a)
+    b = np.round(b, decimals=6)
+    a = np.round(a, decimals=6)
+
+    if epistemic:
+        return Hyperopinion(k, b, a).maximize_uncertainty()
+    else:
+        return Hyperopinion(k, b, a)
 
 
-def weighted_fusion(CC):
+def weighted_fusion(CC, epistemic=True):
     if any(C.k != CC[0].k for C in CC[1:]):
         raise Exception("The hyperopinions have different cardinalities.")
     if len(CC) == 0:
@@ -108,7 +121,8 @@ def weighted_fusion(CC):
 
         a = np.array([])
         for x in range(k):
-            a = np.append(a, np.sum([C.a[x] * (1 - C.u) for C in CC]) / (N - np.sum([C.u for C in CC])))
+            ax = np.sum([C.a[x] * (1 - C.u) for C in CC]) / (N - np.sum([C.u for C in CC]))
+            a = np.append(a, ax)
     elif any(C.u == 0 for C in CC):
         CCdog = [C for C in CC if C.u == 0]
         gamma = len(CCdog)
@@ -128,5 +142,11 @@ def weighted_fusion(CC):
         a = np.array([])
         for x in range(k):
             a = np.append(a, np.sum([C.a[x] for C in CC]) / N)
+    
+    b = np.round(b, decimals=6)
+    a = np.round(a, decimals=6)
 
-    return Hyperopinion(k, b, a)
+    if epistemic:
+        return Hyperopinion(k, b, a).maximize_uncertainty()
+    else:
+        return Hyperopinion(k, b, a)
