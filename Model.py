@@ -201,8 +201,8 @@ def akv_to_sl(akv_model: AKVModel) -> SLModel:
         trust_array: TrustArray = []
         for j in range(n_agents):
             if i != j:
-                influence = akv_model.influence_graph[i][j]
-                trust_array.append(Hyperopinion(2, [1 - influence, influence]))
+                influence = akv_model.influence_graph[j][i]
+                trust_array.append(Hyperopinion(2, [influence, 1 - influence]))
             else:
                 trust_array.append(None)
         trust_graph.append(trust_array)
