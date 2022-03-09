@@ -154,7 +154,7 @@ class SLModel:
         discount_array = [trust_discount_2e(trust_array[trustee_index], self.state[trustee_index]) for trustee_index in
                           range(len(self.state)) if truster_index != trustee_index]
         # print("Discount array", [truster_opinion] + discount_array)
-        new_opinion = fusion_operator([truster_opinion] + discount_array)
+        new_opinion = fusion_operator([truster_opinion] + discount_array, epistemic=False)
         return new_opinion
 
     def overall_update(self, fusion_operator: Callable[[List['HyperopinionInterface']], State]) -> State:
