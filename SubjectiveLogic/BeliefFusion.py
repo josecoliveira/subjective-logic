@@ -54,6 +54,7 @@ def cumulative_fusion(CC, epistemic=True):
     if epistemic:
         return Hyperopinion(k, b, a).maximize_uncertainty()
     else:
+        # print("aleatory")
         return Hyperopinion(k, b, a)
 
 
@@ -97,6 +98,7 @@ def averaging_fusion(CC, epistemic=True):
     if epistemic:
         return Hyperopinion(k, b, a).maximize_uncertainty()
     else:
+        # print("aleatory")
         return Hyperopinion(k, b, a)
 
 
@@ -149,4 +151,5 @@ def weighted_fusion(CC, epistemic=True):
     if epistemic:
         return Hyperopinion(k, b, a).maximize_uncertainty()
     else:
+        # print("aleatory")
         return Hyperopinion(k, b, a)
