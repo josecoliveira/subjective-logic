@@ -6,7 +6,7 @@ from .Hyperopinion import Hyperopinion
 
 epsilon = 0.000001
 
-def cumulative_fusion(CC, epistemic=True):
+def cumulative_fusion(CC, epistemic=True) -> HyperopinionInterface:
     if any(C.k != CC[0].k for C in CC[1:]):
         raise Exception("The hyperopinions have different cardinalities.")
     if len(CC) == 0:

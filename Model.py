@@ -14,6 +14,7 @@ TrustArray = List['HyperopinionInterface']
 
 epsilon = 0.01
 
+
 class AKVModel:
     belief_array: BeliefArray
     influence_graph: InfluenceGraph
@@ -41,31 +42,32 @@ class AKVModel:
                  aj in range(A)]))
         self.belief_array = new_belief_array
         return self.belief_array
-    
+
     def simulate(self, n: int) -> None:
         for _ in range(n):
             self.overall_classic_update()
             self.states += [self.belief_array]
 
-
     class InitialConfigurations:
         @staticmethod
         def uniform(num_agents: int) -> BeliefArray:
-            belief_array = np.array([i/(num_agents - 1) for i in range(num_agents)])
+            belief_array = np.array([i/(num_agents - 1)
+                                    for i in range(num_agents)])
             belief_array[0] = epsilon
             belief_array[-1] = 1 - epsilon
             return belief_array
-        
+
         def mildly(num_agents: int) -> BeliefArray:
             middle = np.ceil(num_agents / 2)
             return [0.2 + 0.2 * i / middle if i < middle else 0.6 + 0.2 * (i - middle) / (num_agents - middle) for i in range(num_agents)]
-        
+
         def extreme(num_agents: int) -> BeliefArray:
             middle = np.ceil(num_agents / 2)
-            belief_array = np.array([0.2 * i / middle if i < middle else 0.8 + 0.2 * (i - middle) / (num_agents - middle) for i in range(num_agents)])
+            belief_array = np.array([0.2 * i / middle if i < middle else 0.8 + 0.2 * (
+                i - middle) / (num_agents - middle) for i in range(num_agents)])
             belief_array[0] = epsilon
             return belief_array
-        
+
         def tripolar(num_agents: int) -> BeliefArray:
             beliefs = [0.0] * num_agents
             first_third = num_agents // 3
@@ -78,21 +80,21 @@ class AKVModel:
                 offset += segment
             beliefs[0] = epsilon
             return np.array(beliefs)
-    
+
     class InfluenceGraphs:
         def clique(num_agents: int, influence: float):
             influence_graph = np.full((num_agents, num_agents), influence)
             for i in range(num_agents):
                 influence_graph[i, i] = 1
             return influence_graph
-        
+
         def circular(num_agents: int, influence: float):
             inf_graph = np.zeros((num_agents, num_agents))
             for i in range(num_agents):
                 inf_graph[i, i] = 1.0
                 inf_graph[i, (i + 1) % num_agents] = influence
             return inf_graph
-        
+
         def disconnected(num_agents: int, influence: float):
             inf_graph = np.zeros((num_agents, num_agents))
             middle = int(np.ceil(num_agents / 2))
@@ -101,7 +103,7 @@ class AKVModel:
             for i in range(num_agents):
                 inf_graph[i, i] = 1
             return inf_graph
-        
+
         def faintly(num_agents: int, weak_influence: float, strong_influence: float):
             inf_graph = np.full((num_agents, num_agents), weak_influence)
             middle = int(np.ceil(num_agents / 2))
@@ -115,14 +117,14 @@ class AKVModel:
             inf_graph = np.full((num_agents, num_agents), others_belief_value)
             inf_graph[0, :-1] = influencers_outgoing_value
             inf_graph[-1, 1:] = influencers_outgoing_value
-            inf_graph[1:,0] = influencers_incoming_value
+            inf_graph[1:, 0] = influencers_incoming_value
             inf_graph[:-1, -1] = influencers_incoming_value
             for i in range(num_agents):
                 inf_graph[i, i] = 1
             return inf_graph
 
         def two_influencers_unbalanced(num_agents, influencers_outgoing_value_first, influencers_outgoing_value_second, influencers_incoming_value_first, influencers_incoming_value_second, others_belief_value):
-            inf_graph = np.full((num_agents,num_agents), others_belief_value)
+            inf_graph = np.full((num_agents, num_agents), others_belief_value)
             inf_graph[0, :-1] = influencers_outgoing_value_first
             inf_graph[-1, 1:] = influencers_outgoing_value_second
             inf_graph[1:, 0] = influencers_incoming_value_first
@@ -154,7 +156,8 @@ class SLModel:
         discount_array = [trust_discount_2e(trust_array[trustee_index], self.state[trustee_index]) for trustee_index in
                           range(len(self.state)) if truster_index != trustee_index]
         # print("Discount array", [truster_opinion] + discount_array)
-        new_opinion = fusion_operator([truster_opinion] + discount_array, epistemic=False)
+        new_opinion = fusion_operator(
+            [truster_opinion] + discount_array, epistemic=False)
         return new_opinion
 
     def overall_update(self, fusion_operator: Callable[[List['HyperopinionInterface']], State]) -> State:
@@ -163,14 +166,14 @@ class SLModel:
             new_state.append(self.update(fusion_operator, i))
         self.state = new_state
         return self.state
-    
+
     @staticmethod
     def opinion_to_belief_state(opinion: HyperopinionInterface) -> float:
         return opinion.P[0]
 
     def belief_array(self):
         return [None if None else SLModel.opinion_to_belief_state(opinion) for opinion in self.state]
-    
+
     def remove_dogmatic_opinions(self):
         for i in range(len(self.state)):
             if np.array_equal(self.state[i].b, [1, 0]):
@@ -193,9 +196,11 @@ def belief_state_to_opinion(n: float) -> HyperopinionInterface:
         opinion = Hyperopinion(2, [0, 1 - epsilon])
     return opinion
 
+
 def akv_to_sl(akv_model: AKVModel) -> SLModel:
     n_agents = len(akv_model.belief_array)
-    state: State = [belief_state_to_opinion(belief_state) for belief_state in akv_model.belief_array]
+    state: State = [belief_state_to_opinion(
+        belief_state) for belief_state in akv_model.belief_array]
     trust_graph: TrustGraph = []
     for i in range(n_agents):
         trust_array: TrustArray = []
@@ -215,8 +220,10 @@ def plot(akv_states: List[BeliefArray], sl_states: List[State], num_agents: int,
     ax[0].set_title("Old model")
     ax[1].set_title("SL model")
     for i in range(num_agents):
-        ax[0].plot(list(range(num_steps + 1)), [akv_states[j][i] for j in range(num_steps + 1)])
-        ax[1].plot(list(range(num_steps + 1)), [sl_states[j][i].P[0] for j in range(num_steps + 1)])
+        ax[0].plot(list(range(num_steps + 1)), [akv_states[j][i]
+                   for j in range(num_steps + 1)])
+        ax[1].plot(list(range(num_steps + 1)), [sl_states[j][i].P[0]
+                   for j in range(num_steps + 1)])
     return fig, ax
 
 
