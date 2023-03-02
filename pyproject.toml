@@ -1,0 +1,26 @@
+[project]
+name = "subjective_logic"
+version = "0.0.1"
+authors = [
+    { name = "José C. Oliveira", email = "josecarlosdeoliveirajr@gmail.com" },
+]
+description = "A python library for Audun Jøsang's Subjective Logic."
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering",
+]
+dependencies = ["numpy"]
+
+[project.urls]
+"Homepage" = "https://github.com/joseoliveirajr/subjective-logic"
+"Bug Tracker" = "https://github.com/joseoliveirajr/subjective-logic/issues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
